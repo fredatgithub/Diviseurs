@@ -1,6 +1,7 @@
 ﻿using Diviseurs.Properties;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -198,6 +199,46 @@ namespace Diviseurs
           var divisors = item.Divisors.Replace("\"", "\"\"");
           writer.WriteLine($"{item.Number},\"{divisors}\",{item.DivisorCount},{(item.IsPrime ? "Oui" : "Non")},{(item.HasTwinPrime ? "Oui" : "Non")}");
         }
+      }
+    }
+
+    private void BtnOpen_Click(object sender, RoutedEventArgs e)
+    {
+      try
+      {
+        // Vérifier le chemin du fichier
+        if (string.IsNullOrWhiteSpace(txtFilePath.Text))
+        {
+          MessageBox.Show("Veuillez entrer un chemin de fichier valide.", "Erreur de saisie", MessageBoxButton.OK, MessageBoxImage.Warning);
+          return;
+        }
+
+        // Générer le nom de fichier final comme dans SaveToCsv
+        var divisorData = dgDivisors.ItemsSource as List<DivisorData>;
+        var maxNumber = divisorData?.LastOrDefault()?.Number ?? 0;
+        var directory = Path.GetDirectoryName(txtFilePath.Text);
+        var fileName = Path.GetFileNameWithoutExtension(txtFilePath.Text);
+        var extension = Path.GetExtension(txtFilePath.Text);
+        var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
+        var finalFilePath = Path.Combine(directory ?? "", finalFileName + extension);
+
+        // Vérifier si le fichier existe
+        if (!File.Exists(finalFilePath))
+        {
+          MessageBox.Show($"Le fichier n'existe pas : {finalFilePath}\nVeuillez d'abord sauvegarder les données.", "Fichier introuvable", MessageBoxButton.OK, MessageBoxImage.Warning);
+          return;
+        }
+
+        // Ouvrir le fichier avec le programme par défaut
+        Process.Start(new ProcessStartInfo
+        {
+          FileName = finalFilePath,
+          UseShellExecute = true
+        });
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show($"Une erreur est survenue lors de l'ouverture du fichier : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
       }
     }
   }
