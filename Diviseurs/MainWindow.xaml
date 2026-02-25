@@ -8,6 +8,15 @@
         Title="Calculateur de Diviseurs" Height="600" Width="900" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:BoolToOuiNonConverter x:Key="BoolToOuiNonConverter"/>
+        
+        <!-- Style pour les lignes alternées du DataGrid -->
+        <Style x:Key="AlternatingRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="LightBlue"/>
+        </Style>
+        
+        <Style x:Key="DefaultRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="AliceBlue"/>
+        </Style>
     </Window.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -25,7 +34,7 @@
             <Button x:Name="btnSave" Content="Sauvegarder" Width="80" Height="25" Click="BtnSave_Click"/>
         </StackPanel>
         
-        <DataGrid Grid.Row="2" x:Name="dgDivisors" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" HeadersVisibility="Column">
+        <DataGrid Grid.Row="2" x:Name="dgDivisors" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" HeadersVisibility="Column" AlternatingRowBackground="LightBlue" RowBackground="AliceBlue">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Nombre" Binding="{Binding Number}" Width="80"/>
                 <DataGridTextColumn Header="Diviseurs" Binding="{Binding Divisors}" Width="*"/>
