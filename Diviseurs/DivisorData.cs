@@ -10,6 +10,7 @@ namespace Diviseurs
     public string Divisors { get; set; }
     public int DivisorCount { get; set; }
     public bool IsPrime { get; set; }
+    public bool HasTwinPrime { get; set; }
 
     public static List<DivisorData> CalculateDivisors(int maxNumber, Action<int> progressCallback = null)
     {
@@ -19,13 +20,15 @@ namespace Diviseurs
       {
         var divisors = GetDivisors(i);
         var divisorList = divisors.OrderByDescending(d => d).ToList();
+        var isPrime = divisors.Count == 2;
 
         result.Add(new DivisorData
         {
           Number = i,
           Divisors = string.Join(", ", divisorList),
           DivisorCount = divisors.Count,
-          IsPrime = divisors.Count == 2
+          IsPrime = isPrime,
+          HasTwinPrime = isPrime && HasTwinPrimeNumber(i, maxNumber)
         });
 
         // Notifier de la progression
@@ -33,6 +36,17 @@ namespace Diviseurs
       }
 
       return result;
+    }
+
+    private static bool HasTwinPrimeNumber(int number, int maxNumber)
+    {
+      // Vérifier si number+2 est premier et dans la plage
+      var twinNumber = number + 2;
+      if (twinNumber > maxNumber)
+        return false;
+
+      var twinDivisors = GetDivisors(twinNumber);
+      return twinDivisors.Count == 2;
     }
 
     private static List<int> GetDivisors(int number)

@@ -40,6 +40,7 @@
                 <DataGridTextColumn Header="Diviseurs" Binding="{Binding Divisors}" Width="*"/>
                 <DataGridTextColumn Header="Nombre de diviseurs" Binding="{Binding DivisorCount}" Width="150"/>
                 <DataGridTextColumn Header="Est premier" Binding="{Binding IsPrime, Converter={StaticResource BoolToOuiNonConverter}}" Width="100"/>
+                <DataGridTextColumn Header="Nombre jumeau" Binding="{Binding HasTwinPrime, Converter={StaticResource BoolToOuiNonConverter}}" Width="100"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -189,14 +189,14 @@ namespace Diviseurs
       using (var writer = new StreamWriter(finalFilePath, false, System.Text.Encoding.UTF8))
       {
         // En-tête CSV
-        writer.WriteLine("Nombre,Diviseurs,Nombre de diviseurs,Est premier");
+        writer.WriteLine("Nombre,Diviseurs,Nombre de diviseurs,Est premier,Nombre jumeau");
 
         // Données
         foreach (var item in data)
         {
           // Échapper les virgules dans les diviseurs si nécessaire
           var divisors = item.Divisors.Replace("\"", "\"\"");
-          writer.WriteLine($"{item.Number},\"{divisors}\",{item.DivisorCount},{(item.IsPrime ? "Oui" : "Non")}");
+          writer.WriteLine($"{item.Number},\"{divisors}\",{item.DivisorCount},{(item.IsPrime ? "Oui" : "Non")},{(item.HasTwinPrime ? "Oui" : "Non")}");
         }
       }
     }
