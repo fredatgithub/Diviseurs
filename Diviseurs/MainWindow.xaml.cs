@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Diviseurs
 {
@@ -28,6 +29,17 @@ namespace Diviseurs
 
       // Charger la valeur du textbox
       txtMaxNumber.Text = Settings.Default.MaxNumber;
+
+      // Charger le format d'export
+      var exportFormat = Settings.Default.ExportFormat;
+      foreach (ComboBoxItem item in cmbExportFormat.Items)
+      {
+        if (item.Tag.ToString() == exportFormat)
+        {
+          cmbExportFormat.SelectedItem = item;
+          break;
+        }
+      }
 
       // Charger le chemin du fichier
       txtFilePath.Text = Settings.Default.FilePath;
@@ -74,10 +86,66 @@ namespace Diviseurs
         // Sauvegarder la valeur du textbox
         Settings.Default.MaxNumber = txtMaxNumber.Text;
 
+        // Sauvegarder le format d'export
+        var selectedItem = cmbExportFormat.SelectedItem as ComboBoxItem;
+        Settings.Default.ExportFormat = selectedItem?.Tag?.ToString() ?? "csv";
+
         // Sauvegarder le chemin du fichier
         Settings.Default.FilePath = txtFilePath.Text;
 
         Settings.Default.Save();
+      }
+    }
+
+    private void CmbExportFormat_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+      UpdateFileNameFormat();
+    }
+
+    private void UpdateFileNameFormat()
+    {
+      try
+      {
+        // Vérifier si le DataGrid est initialisé
+        if (dgDivisors == null || dgDivisors.ItemsSource == null)
+        {
+          return; // Ne pas modifier si le DataGrid n'est pas prêt
+        }
+
+        // Vérifier s'il y a des données calculées
+        var divisorData = dgDivisors.ItemsSource as List<DivisorData>;
+        if (divisorData == null || !divisorData.Any())
+        {
+          return; // Ne pas modifier si pas de calcul effectué
+        }
+
+        // Obtenir le format sélectionné
+        var selectedItem = cmbExportFormat.SelectedItem as ComboBoxItem;
+        if (selectedItem == null || selectedItem.Tag == null)
+        {
+          return; // Ne pas modifier si pas de format sélectionné
+        }
+
+        var extension = selectedItem.Tag.ToString();
+
+        // Mettre à jour le nom du fichier avec le nouveau format
+        var currentFilePath = txtFilePath.Text;
+        if (string.IsNullOrEmpty(currentFilePath))
+        {
+          return; // Ne pas modifier si pas de chemin
+        }
+
+        var directory = Path.GetDirectoryName(currentFilePath);
+        var fileName = Path.GetFileNameWithoutExtension(currentFilePath);
+        var maxNumber = divisorData.LastOrDefault()?.Number ?? 0;
+        
+        var newFilePath = Path.Combine(directory ?? "", $"Diviseurs-{maxNumber}.{extension}");
+        txtFilePath.Text = newFilePath;
+      }
+      catch (Exception ex)
+      {
+        // Ne pas afficher d'erreur pour éviter de perturber l'utilisateur
+        System.Diagnostics.Debug.WriteLine($"Erreur lors de la mise à jour du nom de fichier : {ex.Message}");
       }
     }
 
@@ -107,12 +175,8 @@ namespace Diviseurs
 
         dgDivisors.ItemsSource = divisorData;
 
-        // Mettre à jour le chemin du fichier avec le nombre maxi
-        var currentFilePath = txtFilePath.Text;
-        var directory = Path.GetDirectoryName(currentFilePath);
-        var extension = Path.GetExtension(currentFilePath);
-        var newFilePath = Path.Combine(directory ?? "", $"Diviseurs-{maxNumber}{extension}");
-        txtFilePath.Text = newFilePath;
+        // Mettre à jour le chemin du fichier avec le nombre maxi et le format
+        UpdateFileNameFormat();
       }
       catch (Exception ex)
       {
@@ -153,12 +217,13 @@ namespace Diviseurs
         var maxNumber = divisorData.LastOrDefault()?.Number ?? 0;
         var directory = Path.GetDirectoryName(txtFilePath.Text);
         var fileName = Path.GetFileNameWithoutExtension(txtFilePath.Text);
-        var extension = Path.GetExtension(txtFilePath.Text);
+        var selectedItem = cmbExportFormat.SelectedItem as ComboBoxItem;
+        var extension = selectedItem?.Tag?.ToString() ?? "csv";
         var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
         var finalFilePath = Path.Combine(directory ?? "", finalFileName + extension);
 
-        // Sauvegarder en CSV
-        SaveToCsv(divisorData, txtFilePath.Text);
+        // Sauvegarder selon le format
+        SaveToFile(divisorData, txtFilePath.Text);
         
         MessageBox.Show($"Les données ont été sauvegardées avec succès dans : {finalFilePath}", "Sauvegarde réussie", MessageBoxButton.OK, MessageBoxImage.Information);
       }
@@ -168,13 +233,14 @@ namespace Diviseurs
       }
     }
 
-    private void SaveToCsv(List<DivisorData> data, string filePath)
+    private void SaveToFile(List<DivisorData> data, string filePath)
     {
       // Générer le nom de fichier avec le nombre maxi
       var maxNumber = data.LastOrDefault()?.Number ?? 0;
       var directory = Path.GetDirectoryName(filePath);
       var fileName = Path.GetFileNameWithoutExtension(filePath);
-      var extension = Path.GetExtension(filePath);
+      var selectedItem = cmbExportFormat.SelectedItem as ComboBoxItem;
+      var extension = selectedItem?.Tag?.ToString() ?? "csv";
       
       // Remplacer les placeholders dans le nom de fichier
       var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
@@ -186,19 +252,79 @@ namespace Diviseurs
         Directory.CreateDirectory(directory);
       }
 
-      // Écrire le fichier CSV
-      using (var writer = new StreamWriter(finalFilePath, false, System.Text.Encoding.UTF8))
+      // Écrire le fichier selon le format
+      switch (extension.ToLower())
       {
-        // En-tête CSV
-        writer.WriteLine("Nombre,Diviseurs,Nombre de diviseurs,Est premier,Nombre jumeau");
+        case "csv":
+          SaveAsCsv(data, finalFilePath);
+          break;
+        case "txt":
+          SaveAsTxt(data, finalFilePath);
+          break;
+        case "json":
+          SaveAsJson(data, finalFilePath);
+          break;
+        default:
+          SaveAsCsv(data, finalFilePath);
+          break;
+      }
+    }
 
-        // Données
+    private void SaveAsCsv(List<DivisorData> data, string filePath)
+    {
+      using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+      {
+        writer.WriteLine("Nombre,Diviseurs,Nombre de diviseurs,Est premier,Nombre jumeau");
         foreach (var item in data)
         {
-          // Échapper les virgules dans les diviseurs si nécessaire
           var divisors = item.Divisors.Replace("\"", "\"\"");
           writer.WriteLine($"{item.Number},\"{divisors}\",{item.DivisorCount},{(item.IsPrime ? "Oui" : "Non")},{(item.HasTwinPrime ? "Oui" : "Non")}");
         }
+      }
+    }
+
+    private void SaveAsTxt(List<DivisorData> data, string filePath)
+    {
+      using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+      {
+        writer.WriteLine("Rapport des diviseurs");
+        writer.WriteLine("====================");
+        writer.WriteLine();
+        
+        foreach (var item in data)
+        {
+          writer.WriteLine($"Nombre : {item.Number}");
+          writer.WriteLine($"Diviseurs : {item.Divisors}");
+          writer.WriteLine($"Nombre de diviseurs : {item.DivisorCount}");
+          writer.WriteLine($"Est premier : {(item.IsPrime ? "Oui" : "Non")}");
+          writer.WriteLine($"Nombre jumeau : {(item.HasTwinPrime ? "Oui" : "Non")}");
+          writer.WriteLine();
+        }
+      }
+    }
+
+    private void SaveAsJson(List<DivisorData> data, string filePath)
+    {
+      using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+      {
+        writer.WriteLine("{");
+        writer.WriteLine("  \"diviseurs\": [");
+        
+        for (int i = 0; i < data.Count; i++)
+        {
+          var item = data[i];
+          writer.WriteLine("    {");
+          writer.WriteLine($"      \"nombre\": {item.Number},");
+          writer.WriteLine($"      \"diviseurs\": \"{item.Divisors.Replace("\"", "\\\"")}\",");
+          writer.WriteLine($"      \"nombreDiviseurs\": {item.DivisorCount},");
+          writer.WriteLine($"      \"estPremier\": {(item.IsPrime ? "true" : "false")},");
+          writer.WriteLine($"      \"nombreJumeau\": {(item.HasTwinPrime ? "true" : "false")}");
+          writer.Write(i < data.Count - 1 ? "    }," : "    }");
+          writer.WriteLine();
+        }
+        
+        writer.WriteLine("  ]");
+        writer.WriteLine("}");
       }
     }
 
@@ -213,12 +339,13 @@ namespace Diviseurs
           return;
         }
 
-        // Générer le nom de fichier final comme dans SaveToCsv
+        // Générer le nom de fichier final comme dans SaveToFile
         var divisorData = dgDivisors.ItemsSource as List<DivisorData>;
         var maxNumber = divisorData?.LastOrDefault()?.Number ?? 0;
         var directory = Path.GetDirectoryName(txtFilePath.Text);
         var fileName = Path.GetFileNameWithoutExtension(txtFilePath.Text);
-        var extension = Path.GetExtension(txtFilePath.Text);
+        var selectedItem = cmbExportFormat.SelectedItem as ComboBoxItem;
+        var extension = selectedItem?.Tag?.ToString() ?? "csv";
         var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
         var finalFilePath = Path.Combine(directory ?? "", finalFileName + extension);
 

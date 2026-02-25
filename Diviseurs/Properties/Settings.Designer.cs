@@ -119,7 +119,7 @@ namespace Diviseurs.Properties
 
     [global::System.Configuration.UserScopedSettingAttribute()]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [global::System.Configuration.DefaultSettingValueAttribute("diviseurs.csv")]
+    [global::System.Configuration.DefaultSettingValueAttribute("Diviseurs-{nombre maxi}.csv")]
     public string FilePath
     {
       get
@@ -129,6 +129,21 @@ namespace Diviseurs.Properties
       set
       {
         this["FilePath"] = value;
+      }
+    }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("csv")]
+    public string ExportFormat
+    {
+      get
+      {
+        return ((string)(this["ExportFormat"]));
+      }
+      set
+      {
+        this["ExportFormat"] = value;
       }
     }
   }

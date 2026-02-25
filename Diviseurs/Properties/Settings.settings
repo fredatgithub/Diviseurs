@@ -25,5 +25,8 @@
     <Setting Name="FilePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">Diviseurs-{nombre maxi}.csv</Value>
     </Setting>
+    <Setting Name="ExportFormat" Type="System.String" Scope="User">
+      <Value Profile="(Default)">csv</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

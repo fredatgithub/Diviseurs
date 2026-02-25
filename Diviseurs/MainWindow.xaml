@@ -29,6 +29,12 @@
             <Label Content="Nombre maxi:" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <TextBox x:Name="txtMaxNumber" Width="100" Height="25" VerticalContentAlignment="Center" Text="100"/>
             <Button x:Name="btnCalculate" Content="Calculer" Width="80" Height="25" Margin="10,0,10,0" Click="BtnCalculate_Click"/>
+            <Label Content="Format export:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox x:Name="cmbExportFormat" Width="100" Height="25" VerticalContentAlignment="Center" Margin="0,0,10,0" SelectionChanged="CmbExportFormat_SelectionChanged">
+                <ComboBoxItem Content="CSV" Tag="csv" IsSelected="True"/>
+                <ComboBoxItem Content="TXT" Tag="txt"/>
+                <ComboBoxItem Content="JSON" Tag="json"/>
+            </ComboBox>
             <Label Content="Fichier CSV:" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <TextBox x:Name="txtFilePath" Width="200" Height="25" VerticalContentAlignment="Center" Margin="0,0,10,0"/>
             <Button x:Name="btnSave" Content="Sauvegarder" Width="80" Height="25" Margin="0,0,10,0" Click="BtnSave_Click"/>
