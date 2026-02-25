@@ -101,5 +101,20 @@ namespace Diviseurs.Properties
         this["MainWindowWindowState"] = value;
       }
     }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("100")]
+    public string MaxNumber
+    {
+      get
+      {
+        return ((string)(this["MaxNumber"]));
+      }
+      set
+      {
+        this["MaxNumber"] = value;
+      }
+    }
   }
 }

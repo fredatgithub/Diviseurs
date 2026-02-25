@@ -22,6 +22,9 @@ namespace Diviseurs
       this.Height = Settings.Default.MainWindowHeight;
       this.WindowState = Settings.Default.MainWindowWindowState;
 
+      // Charger la valeur du textbox
+      txtMaxNumber.Text = Settings.Default.MaxNumber;
+
       // S'assurer que la fenêtre est visible sur l'écran
       EnsureWindowIsVisible();
     }
@@ -60,6 +63,10 @@ namespace Diviseurs
         Settings.Default.MainWindowWidth = this.RestoreBounds.Width;
         Settings.Default.MainWindowHeight = this.RestoreBounds.Height;
         Settings.Default.MainWindowWindowState = this.WindowState;
+        
+        // Sauvegarder la valeur du textbox
+        Settings.Default.MaxNumber = txtMaxNumber.Text;
+        
         Settings.Default.Save();
       }
     }
