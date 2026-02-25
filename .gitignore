@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+.vs/Diviseurs/v17/.suo
+.vs/Diviseurs/v17/DocumentLayout.backup.json
+.vs/Diviseurs/v17/DocumentLayout.json
