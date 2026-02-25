@@ -34,6 +34,7 @@
                 <ComboBoxItem Content="CSV" Tag="csv" IsSelected="True"/>
                 <ComboBoxItem Content="TXT" Tag="txt"/>
                 <ComboBoxItem Content="JSON" Tag="json"/>
+                <ComboBoxItem Content="XLSX" Tag="xlsx"/>
             </ComboBox>
             <Label Content="Fichier CSV:" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <TextBox x:Name="txtFilePath" Width="200" Height="25" VerticalContentAlignment="Center" Margin="0,0,10,0"/>

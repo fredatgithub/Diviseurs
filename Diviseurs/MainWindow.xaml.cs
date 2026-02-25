@@ -279,8 +279,8 @@ namespace Diviseurs
         case "json":
           SaveAsJson(data, finalFilePath);
           break;
-        default:
-          SaveAsCsv(data, finalFilePath);
+        case "xlsx":
+          SaveAsXlsx(data, finalFilePath);
           break;
       }
     }
@@ -315,6 +315,36 @@ namespace Diviseurs
           writer.WriteLine($"Nombre jumeau : {(item.HasTwinPrime ? "Oui" : "Non")}");
           writer.WriteLine();
         }
+      }
+    }
+
+    private void SaveAsXlsx(List<DivisorData> data, string filePath)
+    {
+      using (var package = new OfficeOpenXml.ExcelPackage())
+      {
+        var worksheet = package.Workbook.Worksheets.Add("Diviseurs");
+
+        // En-têtes
+        worksheet.Cells[1, 1].Value = "Nombre";
+        worksheet.Cells[1, 2].Value = "Diviseurs";
+        worksheet.Cells[1, 3].Value = "Nombre de diviseurs";
+        worksheet.Cells[1, 4].Value = "Est premier";
+        worksheet.Cells[1, 5].Value = "Nombre jumeau";
+
+        // Données
+        for (int i = 0; i < data.Count; i++)
+        {
+          var row = i + 2;
+          var item = data[i];
+
+          worksheet.Cells[row, 1].Value = item.Number;
+          worksheet.Cells[row, 2].Value = item.Divisors;
+          worksheet.Cells[row, 3].Value = item.DivisorCount;
+          worksheet.Cells[row, 4].Value = item.IsPrime ? "Oui" : "Non";
+          worksheet.Cells[row, 5].Value = item.HasTwinPrime ? "Oui" : "Non";
+        }
+
+        package.SaveAs(filePath);
       }
     }
 
