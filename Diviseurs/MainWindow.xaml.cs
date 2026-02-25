@@ -128,6 +128,10 @@ namespace Diviseurs
 
         var extension = selectedItem.Tag.ToString();
 
+        // Débogage pour voir la valeur exacte
+        System.Diagnostics.Debug.WriteLine($"Extension brute: '{extension}'");
+        System.Diagnostics.Debug.WriteLine($"Extension nettoyée: '{extension.Replace(".", "")}'");
+
         // Mettre à jour le nom du fichier avec le nouveau format
         var currentFilePath = txtFilePath.Text;
         if (string.IsNullOrEmpty(currentFilePath))
@@ -137,9 +141,24 @@ namespace Diviseurs
 
         var directory = Path.GetDirectoryName(currentFilePath);
         var fileName = Path.GetFileNameWithoutExtension(currentFilePath);
-        var maxNumber = divisorData.LastOrDefault()?.Number ?? 0;
-        
-        var newFilePath = Path.Combine(directory ?? "", $"Diviseurs-{maxNumber}.{extension}");
+        var maxNumber = 0;
+        if (int.TryParse(txtMaxNumber.Text, out int parsedMaxNumber))
+        {
+          maxNumber = parsedMaxNumber;
+        }
+
+        var cleanExtension = extension.Replace(".", "");
+        var newFileName = $"Diviseurs-{maxNumber}.{cleanExtension}";
+        var newFilePath = string.IsNullOrEmpty(directory) ? newFileName : Path.Combine(directory, newFileName);
+
+        // Débogage complet pour tracer le problème
+        System.Diagnostics.Debug.WriteLine($"maxNumber: {maxNumber}");
+        System.Diagnostics.Debug.WriteLine($"extension: '{extension}'");
+        System.Diagnostics.Debug.WriteLine($"cleanExtension: '{cleanExtension}'");
+        System.Diagnostics.Debug.WriteLine($"newFileName: '{newFileName}'");
+        System.Diagnostics.Debug.WriteLine($"directory: '{directory}'");
+        System.Diagnostics.Debug.WriteLine($"newFilePath: '{newFilePath}'");
+
         txtFilePath.Text = newFilePath;
       }
       catch (Exception ex)
@@ -214,17 +233,22 @@ namespace Diviseurs
         }
 
         // Générer le nom de fichier final pour le message
-        var maxNumber = divisorData.LastOrDefault()?.Number ?? 0;
+        var maxNumber = 0;
+        if (int.TryParse(txtMaxNumber.Text, out int parsedMaxNumber))
+        {
+          maxNumber = parsedMaxNumber;
+        }
         var directory = Path.GetDirectoryName(txtFilePath.Text);
         var fileName = Path.GetFileNameWithoutExtension(txtFilePath.Text);
         var selectedItem = cmbExportFormat.SelectedItem as ComboBoxItem;
         var extension = selectedItem?.Tag?.ToString() ?? "csv";
         var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
-        var finalFilePath = Path.Combine(directory ?? "", finalFileName + extension);
+        var cleanExtension = extension.Replace(".", "");
+        var finalFilePath = Path.Combine(directory ?? "", finalFileName + "." + cleanExtension);
 
         // Sauvegarder selon le format
         SaveToFile(divisorData, txtFilePath.Text);
-        
+
         MessageBox.Show($"Les données ont été sauvegardées avec succès dans : {finalFilePath}", "Sauvegarde réussie", MessageBoxButton.OK, MessageBoxImage.Information);
       }
       catch (Exception ex)
@@ -241,16 +265,7 @@ namespace Diviseurs
       var fileName = Path.GetFileNameWithoutExtension(filePath);
       var selectedItem = cmbExportFormat.SelectedItem as ComboBoxItem;
       var extension = selectedItem?.Tag?.ToString() ?? "csv";
-      
-      // Remplacer les placeholders dans le nom de fichier
-      var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
-      var finalFilePath = Path.Combine(directory ?? "", finalFileName + extension);
-
-      // Créer le répertoire si nécessaire
-      if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-      {
-        Directory.CreateDirectory(directory);
-      }
+      var finalFilePath = Path.Combine(directory ?? "", fileName + "." + extension);
 
       // Écrire le fichier selon le format
       switch (extension.ToLower())
@@ -290,7 +305,7 @@ namespace Diviseurs
         writer.WriteLine("Rapport des diviseurs");
         writer.WriteLine("====================");
         writer.WriteLine();
-        
+
         foreach (var item in data)
         {
           writer.WriteLine($"Nombre : {item.Number}");
@@ -309,7 +324,7 @@ namespace Diviseurs
       {
         writer.WriteLine("{");
         writer.WriteLine("  \"diviseurs\": [");
-        
+
         for (int i = 0; i < data.Count; i++)
         {
           var item = data[i];
@@ -322,7 +337,7 @@ namespace Diviseurs
           writer.Write(i < data.Count - 1 ? "    }," : "    }");
           writer.WriteLine();
         }
-        
+
         writer.WriteLine("  ]");
         writer.WriteLine("}");
       }
@@ -347,7 +362,8 @@ namespace Diviseurs
         var selectedItem = cmbExportFormat.SelectedItem as ComboBoxItem;
         var extension = selectedItem?.Tag?.ToString() ?? "csv";
         var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
-        var finalFilePath = Path.Combine(directory ?? "", finalFileName + extension);
+        var cleanExtension = extension.Replace(".", "");
+        var finalFilePath = Path.Combine(directory ?? "", finalFileName + "." + cleanExtension);
 
         // Vérifier si le fichier existe
         if (!File.Exists(finalFilePath))
