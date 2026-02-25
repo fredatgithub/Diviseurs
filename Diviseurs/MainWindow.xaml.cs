@@ -105,6 +105,13 @@ namespace Diviseurs
         }));
 
         dgDivisors.ItemsSource = divisorData;
+
+        // Mettre à jour le chemin du fichier avec le nombre maxi
+        var currentFilePath = txtFilePath.Text;
+        var directory = Path.GetDirectoryName(currentFilePath);
+        var extension = Path.GetExtension(currentFilePath);
+        var newFilePath = Path.Combine(directory ?? "", $"Diviseurs-{maxNumber}{extension}");
+        txtFilePath.Text = newFilePath;
       }
       catch (Exception ex)
       {
@@ -141,10 +148,18 @@ namespace Diviseurs
           return;
         }
 
+        // Générer le nom de fichier final pour le message
+        var maxNumber = divisorData.LastOrDefault()?.Number ?? 0;
+        var directory = Path.GetDirectoryName(txtFilePath.Text);
+        var fileName = Path.GetFileNameWithoutExtension(txtFilePath.Text);
+        var extension = Path.GetExtension(txtFilePath.Text);
+        var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
+        var finalFilePath = Path.Combine(directory ?? "", finalFileName + extension);
+
         // Sauvegarder en CSV
         SaveToCsv(divisorData, txtFilePath.Text);
         
-        MessageBox.Show($"Les données ont été sauvegardées avec succès dans : {txtFilePath.Text}", "Sauvegarde réussie", MessageBoxButton.OK, MessageBoxImage.Information);
+        MessageBox.Show($"Les données ont été sauvegardées avec succès dans : {finalFilePath}", "Sauvegarde réussie", MessageBoxButton.OK, MessageBoxImage.Information);
       }
       catch (Exception ex)
       {
@@ -154,15 +169,24 @@ namespace Diviseurs
 
     private void SaveToCsv(List<DivisorData> data, string filePath)
     {
-      // Créer le répertoire si nécessaire
+      // Générer le nom de fichier avec le nombre maxi
+      var maxNumber = data.LastOrDefault()?.Number ?? 0;
       var directory = Path.GetDirectoryName(filePath);
+      var fileName = Path.GetFileNameWithoutExtension(filePath);
+      var extension = Path.GetExtension(filePath);
+      
+      // Remplacer les placeholders dans le nom de fichier
+      var finalFileName = fileName.Replace("{nombre maxi}", maxNumber.ToString());
+      var finalFilePath = Path.Combine(directory ?? "", finalFileName + extension);
+
+      // Créer le répertoire si nécessaire
       if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
       {
         Directory.CreateDirectory(directory);
       }
 
       // Écrire le fichier CSV
-      using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+      using (var writer = new StreamWriter(finalFilePath, false, System.Text.Encoding.UTF8))
       {
         // En-tête CSV
         writer.WriteLine("Nombre,Diviseurs,Nombre de diviseurs,Est premier");

@@ -23,7 +23,7 @@
       <Value Profile="(Default)">100</Value>
     </Setting>
     <Setting Name="FilePath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">diviseurs.csv</Value>
+      <Value Profile="(Default)">Diviseurs-{nombre maxi}.csv</Value>
     </Setting>
   </Settings>
 </SettingsFile>
