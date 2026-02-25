@@ -116,5 +116,20 @@ namespace Diviseurs.Properties
         this["MaxNumber"] = value;
       }
     }
+
+    [global::System.Configuration.UserScopedSettingAttribute()]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+    [global::System.Configuration.DefaultSettingValueAttribute("diviseurs.csv")]
+    public string FilePath
+    {
+      get
+      {
+        return ((string)(this["FilePath"]));
+      }
+      set
+      {
+        this["FilePath"] = value;
+      }
+    }
   }
 }

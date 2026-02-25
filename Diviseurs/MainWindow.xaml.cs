@@ -1,5 +1,8 @@
 ﻿using Diviseurs.Properties;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -24,6 +27,9 @@ namespace Diviseurs
 
       // Charger la valeur du textbox
       txtMaxNumber.Text = Settings.Default.MaxNumber;
+
+      // Charger le chemin du fichier
+      txtFilePath.Text = Settings.Default.FilePath;
 
       // S'assurer que la fenêtre est visible sur l'écran
       EnsureWindowIsVisible();
@@ -67,6 +73,9 @@ namespace Diviseurs
         // Sauvegarder la valeur du textbox
         Settings.Default.MaxNumber = txtMaxNumber.Text;
 
+        // Sauvegarder le chemin du fichier
+        Settings.Default.FilePath = txtFilePath.Text;
+
         Settings.Default.Save();
       }
     }
@@ -104,6 +113,67 @@ namespace Diviseurs
       finally
       {
         waitingWindow.Close();
+      }
+    }
+
+    private void BtnSave_Click(object sender, RoutedEventArgs e)
+    {
+      try
+      {
+        // Vérifier si des données sont disponibles
+        if (dgDivisors.ItemsSource == null)
+        {
+          MessageBox.Show("Aucune donnée à sauvegarder. Veuillez d'abord effectuer un calcul.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+          return;
+        }
+
+        // Vérifier le chemin du fichier
+        if (string.IsNullOrWhiteSpace(txtFilePath.Text))
+        {
+          MessageBox.Show("Veuillez entrer un chemin de fichier valide.", "Erreur de saisie", MessageBoxButton.OK, MessageBoxImage.Warning);
+          return;
+        }
+
+        var divisorData = dgDivisors.ItemsSource as List<DivisorData>;
+        if (divisorData == null || !divisorData.Any())
+        {
+          MessageBox.Show("Aucune donnée à sauvegarder.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+          return;
+        }
+
+        // Sauvegarder en CSV
+        SaveToCsv(divisorData, txtFilePath.Text);
+        
+        MessageBox.Show($"Les données ont été sauvegardées avec succès dans : {txtFilePath.Text}", "Sauvegarde réussie", MessageBoxButton.OK, MessageBoxImage.Information);
+      }
+      catch (Exception ex)
+      {
+        MessageBox.Show($"Une erreur est survenue lors de la sauvegarde : {ex.Message}", "Erreur", MessageBoxButton.OK, MessageBoxImage.Error);
+      }
+    }
+
+    private void SaveToCsv(List<DivisorData> data, string filePath)
+    {
+      // Créer le répertoire si nécessaire
+      var directory = Path.GetDirectoryName(filePath);
+      if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+      {
+        Directory.CreateDirectory(directory);
+      }
+
+      // Écrire le fichier CSV
+      using (var writer = new StreamWriter(filePath, false, System.Text.Encoding.UTF8))
+      {
+        // En-tête CSV
+        writer.WriteLine("Nombre,Diviseurs,Nombre de diviseurs,Est premier");
+
+        // Données
+        foreach (var item in data)
+        {
+          // Échapper les virgules dans les diviseurs si nécessaire
+          var divisors = item.Divisors.Replace("\"", "\"\"");
+          writer.WriteLine($"{item.Number},\"{divisors}\",{item.DivisorCount},{(item.IsPrime ? "Oui" : "Non")}");
+        }
       }
     }
   }

@@ -22,5 +22,8 @@
     <Setting Name="MaxNumber" Type="System.String" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
+    <Setting Name="FilePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">diviseurs.csv</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

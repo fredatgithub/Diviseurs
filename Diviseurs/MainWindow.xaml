@@ -19,7 +19,10 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
             <Label Content="Nombre maxi:" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <TextBox x:Name="txtMaxNumber" Width="100" Height="25" VerticalContentAlignment="Center" Text="100"/>
-            <Button x:Name="btnCalculate" Content="Calculer" Width="80" Height="25" Margin="10,0,0,0" Click="BtnCalculate_Click"/>
+            <Button x:Name="btnCalculate" Content="Calculer" Width="80" Height="25" Margin="10,0,10,0" Click="BtnCalculate_Click"/>
+            <Label Content="Fichier CSV:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBox x:Name="txtFilePath" Width="200" Height="25" VerticalContentAlignment="Center" Margin="0,0,10,0"/>
+            <Button x:Name="btnSave" Content="Sauvegarder" Width="80" Height="25" Click="BtnSave_Click"/>
         </StackPanel>
         
         <DataGrid Grid.Row="2" x:Name="dgDivisors" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" HeadersVisibility="Column">
