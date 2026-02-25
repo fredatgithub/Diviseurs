@@ -63,10 +63,10 @@ namespace Diviseurs
         Settings.Default.MainWindowWidth = this.RestoreBounds.Width;
         Settings.Default.MainWindowHeight = this.RestoreBounds.Height;
         Settings.Default.MainWindowWindowState = this.WindowState;
-        
+
         // Sauvegarder la valeur du textbox
         Settings.Default.MaxNumber = txtMaxNumber.Text;
-        
+
         Settings.Default.Save();
       }
     }
@@ -86,7 +86,14 @@ namespace Diviseurs
       {
         waitingWindow.Show();
 
-        var divisorData = await Task.Run(() => DivisorData.CalculateDivisors(maxNumber));
+        var divisorData = await Task.Run(() => DivisorData.CalculateDivisors(maxNumber, currentNumber =>
+        {
+          // Mettre à jour l'UI sur le thread principal
+          this.Dispatcher.Invoke(() =>
+          {
+            waitingWindow.CurrentNumberText = $"Calcul du nombre : {currentNumber} / {maxNumber}";
+          });
+        }));
 
         dgDivisors.ItemsSource = divisorData;
       }
