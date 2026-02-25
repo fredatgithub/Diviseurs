@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using ClosedXML.Excel;
 
 namespace Diviseurs
 {
@@ -320,31 +321,31 @@ namespace Diviseurs
 
     private void SaveAsXlsx(List<DivisorData> data, string filePath)
     {
-      using (var package = new OfficeOpenXml.ExcelPackage())
+      using (var workbook = new XLWorkbook())
       {
-        var worksheet = package.Workbook.Worksheets.Add("Diviseurs");
-
+        var worksheet = workbook.Worksheets.Add("Diviseurs");
+        
         // En-têtes
-        worksheet.Cells[1, 1].Value = "Nombre";
-        worksheet.Cells[1, 2].Value = "Diviseurs";
-        worksheet.Cells[1, 3].Value = "Nombre de diviseurs";
-        worksheet.Cells[1, 4].Value = "Est premier";
-        worksheet.Cells[1, 5].Value = "Nombre jumeau";
-
+        worksheet.Cell(1, 1).Value = "Nombre";
+        worksheet.Cell(1, 2).Value = "Diviseurs";
+        worksheet.Cell(1, 3).Value = "Nombre de diviseurs";
+        worksheet.Cell(1, 4).Value = "Est premier";
+        worksheet.Cell(1, 5).Value = "Nombre jumeau";
+        
         // Données
         for (int i = 0; i < data.Count; i++)
         {
           var row = i + 2;
           var item = data[i];
-
-          worksheet.Cells[row, 1].Value = item.Number;
-          worksheet.Cells[row, 2].Value = item.Divisors;
-          worksheet.Cells[row, 3].Value = item.DivisorCount;
-          worksheet.Cells[row, 4].Value = item.IsPrime ? "Oui" : "Non";
-          worksheet.Cells[row, 5].Value = item.HasTwinPrime ? "Oui" : "Non";
+          
+          worksheet.Cell(row, 1).Value = item.Number;
+          worksheet.Cell(row, 2).Value = item.Divisors;
+          worksheet.Cell(row, 3).Value = item.DivisorCount;
+          worksheet.Cell(row, 4).Value = item.IsPrime ? "Oui" : "Non";
+          worksheet.Cell(row, 5).Value = item.HasTwinPrime ? "Oui" : "Non";
         }
-
-        package.SaveAs(filePath);
+        
+        workbook.SaveAs(filePath);
       }
     }
 
