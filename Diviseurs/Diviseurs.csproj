@@ -56,8 +56,9 @@
     <Reference Include="ExcelNumberFormat, Version=1.1.0.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
       <HintPath>..\packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bcl.Cryptography, Version=10.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.Cryptography.10.0.3\lib\net462\Microsoft.Bcl.Cryptography.dll</HintPath>
+    <Reference Include="Microsoft.Bcl.Cryptography, Version=10.0.0.6, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\Microsoft.Bcl.Cryptography.10.0.6\lib\net462\Microsoft.Bcl.Cryptography.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Bcl.HashCode, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.HashCode.6.0.0\lib\net462\Microsoft.Bcl.HashCode.dll</HintPath>
@@ -74,8 +75,9 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Formats.Asn1, Version=10.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Formats.Asn1.10.0.3\lib\net462\System.Formats.Asn1.dll</HintPath>
+    <Reference Include="System.Formats.Asn1, Version=10.0.0.6, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.Formats.Asn1.10.0.6\lib\net462\System.Formats.Asn1.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
@@ -88,8 +90,9 @@
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Security" />
-    <Reference Include="System.Security.Cryptography.Xml, Version=10.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Xml.10.0.3\lib\net462\System.Security.Cryptography.Xml.dll</HintPath>
+    <Reference Include="System.Security.Cryptography.Xml, Version=10.0.0.6, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.Security.Cryptography.Xml.10.0.6\lib\net462\System.Security.Cryptography.Xml.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.ValueTuple" />
     <Reference Include="System.Xml" />
